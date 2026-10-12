@@ -1,0 +1,28 @@
+{
+  "name": "hush-concept",
+  "version": "1.0.0",
+  "description": "A single-page concept microsite for a premium headphone brand that does not exist. Built as a BOOST ME capability showcase, in the same spirit as the [מאמא מיה scrolltelling tour](https://brr7.short.gy/boostme-mamma-mia). See [boost-me.digital](https://boost-me.digital) for the real thing.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wenjygal/hush-concept.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/wenjygal/hush-concept/issues"
+  },
+  "homepage": "https://github.com/wenjygal/hush-concept#readme",
+  "devDependencies": {
+    "playwright": "^1.64.0"
+  }
+}
