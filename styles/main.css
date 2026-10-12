@@ -236,9 +236,27 @@ section {
   border-radius: var(--radius);
   padding: var(--space-md);
   display: flex;
-  align-items: flex-end;
-  color: var(--color-metal);
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: var(--space-xs);
+}
+
+.bento__tile h3 {
+  font-family: var(--font-display);
+  color: var(--color-text);
+  font-size: clamp(1.1rem, 1rem + 0.3vw, 1.4rem);
+  line-height: 1.3;
+}
+
+.bento__tile--a h3 {
+  font-size: clamp(1.4rem, 1.1rem + 1vw, 2rem);
+}
+
+.bento__tile p {
   font-family: var(--font-mono);
+  color: var(--color-metal);
+  font-size: 0.95rem;
+  line-height: 1.5;
 }
 
 .bento__tile--a {
