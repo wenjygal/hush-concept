@@ -1,0 +1,25 @@
+/* Self-hosted webfonts. Files live in assets/fonts/, not a remote CDN dependency at runtime. */
+
+@font-face {
+  font-family: "Cabinet Grotesk";
+  src: url("../assets/fonts/cabinet-grotesk-medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Cabinet Grotesk";
+  src: url("../assets/fonts/cabinet-grotesk-bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("../assets/fonts/jetbrains-mono-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
