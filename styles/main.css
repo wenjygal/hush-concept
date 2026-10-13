@@ -43,7 +43,7 @@ figure {
 
 html {
   scroll-behavior: smooth;
-  scrollbar-color: var(--color-accent) var(--color-bg);
+  scrollbar-color: var(--color-metal) var(--color-bg);
 }
 
 body {

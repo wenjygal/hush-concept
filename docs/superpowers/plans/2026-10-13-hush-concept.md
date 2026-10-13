@@ -8,19 +8,19 @@
 
 **Tech Stack:** Three.js (ESM via CDN, e.g. `https://unpkg.com/three@<pinned-version>/build/three.module.js`), native CSS (custom properties, `@media` queries, `@starting-style` where supported), Node `--test` + `assert` for unit tests (dev-only, not shipped), `gh` CLI for repo creation, GitHub Pages for hosting.
 
-**Spec:** Design Spec section of the `BOOST ME — HUSH SHOWCASE` project note in the GEMS vault (`004 projects/BOOST ME/BOOST ME — HUSH SHOWCASE.md`), plus the Direction Contract recorded in this repo's `.impeccable/surfaces/index-html.md`.
+**Spec:** The project's internal planning note (design spec), plus the Direction Contract recorded in this repo's `.impeccable/surfaces/index-html.md`.
 
-**Working directory:** `C:\Users\Gal Efrati\hush-concept` (this repo). Task 1 (repo scaffold, `impeccable init`, GitHub repo creation) is already complete as of 2026-10-13 — this file documents it for the record; execution resumes at Task 2.
+**Working directory:** the local checkout of this repo (`hush-concept`). Task 1 (repo scaffold, `impeccable init`, GitHub repo creation) is already complete as of 2026-10-13 — this file documents it for the record; execution resumes at Task 2.
 
 ## Global Constraints
 
 - No React/Next, no build step. Vanilla HTML/CSS/JS. Three.js via ESM CDN import only.
-- Repo `hush-concept`, private, under the `wenjygal` GitHub account, deployed via GitHub Pages.
+- Repo `hush-concept`, public, under the `wenjygal` GitHub account, deployed via GitHub Pages.
 - Palette locked: background `zinc-950`-range off-black, text off-white, cool metal/silver material cues, exactly one accent (saturated red/coral), used only for CTA/interactive highlight, identical across all three sections.
 - Typography: display font Cabinet Grotesk, mono font JetBrains Mono, both self-hosted via `@font-face` (no Google Fonts `<link>` tag). No Inter, no default serif.
 - Zero "concept" / "קונספט" / "demo" / "showcase" language anywhere in the Hero or Section 2. The reveal lives exclusively in Section 3.
 - Zero em-dash (`—`) characters anywhere in visible copy.
-- One CTA intent only, identical label everywhere it appears. Section 3's CTA points to `boost-me.digital`.
+- One CTA intent only, identical label everywhere it appears. Section 3's CTA points to `boost-me.digital`. **Exception approved 2026-10-13 after the final whole-branch review flagged the original hero CTA as a Critical twist-leak** (it read "Visit BOOST ME" linking to boost-me.digital in the first viewport, which gave away the premise and let visitors leave before the reveal): the Hero's CTA is a separate, non-revealing in-page anchor ("Hear it" -> scrolls to Section 2), not the same intent as Section 3's conversion CTA. Section 3 remains the page's only real conversion intent.
 - `prefers-reduced-motion: reduce` collapses hero rotation, idle bob, and any scroll-reveal motion to fully static.
 - WCAG AA contrast minimum for the accent color against `zinc-950` and for all body text.
 - Hero section uses `min-height: 100dvh`, never a fixed `100vh`/`height: 100vh` lock.
@@ -279,4 +279,4 @@ git commit -m "chore: audit fixes and DESIGN.md"
 git push origin main
 ```
 
-- [ ] **Step 7: Report back** — the live GitHub Pages URL and the repo URL, so Gal can update the `url` frontmatter field on the `BOOST ME — HUSH SHOWCASE` vault project note and decide whether/how to link it from the BOOST ME Linktree showcase (same pattern as the מאמא מיה tour link).
+- [ ] **Step 7: Report back** — the live GitHub Pages URL and the repo URL, to update the project's internal planning note with the live link and decide whether/how to link it from the BOOST ME Linktree showcase (same pattern as the מאמא מיה tour link).
