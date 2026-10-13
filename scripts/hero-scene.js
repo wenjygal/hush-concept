@@ -4,6 +4,7 @@
 
 import * as THREE from "https://unpkg.com/three@0.186.1/build/three.module.js";
 import { createRotationState } from "./rotation-controller.js";
+import { createHeadphoneModel } from "./headphone-model.js";
 
 const DEG = Math.PI / 180;
 
@@ -14,50 +15,8 @@ const BASE_YAW = -18 * DEG;
 const BASE_PITCH = 8 * DEG;
 
 // ---------------------------------------------------------------------------
-// Procedural textures (no external image assets)
+// Procedural textures (no external image assets; the model owns its own)
 // ---------------------------------------------------------------------------
-
-// Very fine concentric machining rings for the ear-cup faces (roughness only,
-// low contrast: it should read as a finish, not a pattern).
-function createSpunMetalRoughness(size = 1024) {
-  const c = document.createElement("canvas");
-  c.width = c.height = size;
-  const ctx = c.getContext("2d");
-  const cx = size / 2;
-  ctx.fillStyle = "rgb(110,110,110)";
-  ctx.fillRect(0, 0, size, size);
-  for (let r = 1; r < cx * 1.42; r += 1.5) {
-    const v = 100 + Math.random() * 20;
-    ctx.strokeStyle = `rgba(${v},${v},${v},0.35)`;
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.arc(cx, cx, r, 0, Math.PI * 2);
-    ctx.stroke();
-  }
-  const tex = new THREE.CanvasTexture(c);
-  tex.colorSpace = THREE.NoColorSpace;
-  tex.anisotropy = 8;
-  return tex;
-}
-
-// Fine grain bump for the protein-leather cushions so they do not read as plastic.
-function createLeatherGrain(size = 256) {
-  const c = document.createElement("canvas");
-  c.width = c.height = size;
-  const ctx = c.getContext("2d");
-  const img = ctx.createImageData(size, size);
-  for (let i = 0; i < size * size; i++) {
-    const v = 110 + Math.random() * 40;
-    img.data[i * 4] = img.data[i * 4 + 1] = img.data[i * 4 + 2] = v;
-    img.data[i * 4 + 3] = 255;
-  }
-  ctx.putImageData(img, 0, 0);
-  const tex = new THREE.CanvasTexture(c);
-  tex.colorSpace = THREE.NoColorSpace;
-  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-  tex.repeat.set(6, 2);
-  return tex;
-}
 
 // Soft contact shadow under the product.
 function createShadowTexture(size = 256) {
@@ -132,197 +91,6 @@ function createStudioEnvironment(renderer) {
 }
 
 // ---------------------------------------------------------------------------
-// Headphone model, built from primitives
-// ---------------------------------------------------------------------------
-
-function buildHeadphones(disposables) {
-  const track = (x) => {
-    disposables.push(x);
-    return x;
-  };
-
-  const spunRough = track(createSpunMetalRoughness());
-  const grain = track(createLeatherGrain());
-
-  // Bead-blasted, anodized aluminium (satin, not chrome): housing and headband.
-  const anodized = track(
-    new THREE.MeshPhysicalMaterial({
-      color: 0xbcbfc5,
-      metalness: 1,
-      roughness: 0.38,
-      clearcoat: 0.25,
-      clearcoatRoughness: 0.3,
-    }),
-  );
-
-  // Machined cup face: fine concentric rings carried in the roughness only.
-  const faceMetal = track(
-    new THREE.MeshPhysicalMaterial({
-      color: 0xd4d6db,
-      metalness: 1,
-      roughness: 0.4,
-      roughnessMap: spunRough,
-      clearcoat: 0.2,
-      clearcoatRoughness: 0.25,
-    }),
-  );
-
-  // Polished stainless: telescoping stems and the jewel ring on each face.
-  const steel = track(
-    new THREE.MeshPhysicalMaterial({
-      color: 0xc2c5ca,
-      metalness: 1,
-      roughness: 0.12,
-      clearcoat: 0.5,
-      clearcoatRoughness: 0.05,
-    }),
-  );
-
-  // Graphite trim: a deliberate two-tone break between parts.
-  const graphite = track(
-    new THREE.MeshPhysicalMaterial({
-      color: 0x34353a,
-      metalness: 0.8,
-      roughness: 0.42,
-    }),
-  );
-
-  // Matte protein-leather cushions.
-  const cushion = track(
-    new THREE.MeshStandardMaterial({
-      color: 0x2e2e33,
-      roughness: 0.7,
-      metalness: 0,
-      bumpMap: grain,
-      bumpScale: 0.35,
-    }),
-  );
-
-  // Acoustic fabric behind the cushion.
-  const fabric = track(
-    new THREE.MeshStandardMaterial({
-      color: 0x141416,
-      roughness: 0.95,
-      metalness: 0,
-    }),
-  );
-
-  const geo = (g) => track(g);
-  const model = new THREE.Group();
-
-  // --- Headband -------------------------------------------------------------
-  const BAND_R = 1.1;
-
-  // Outer aluminium band: a wide, flat half-ring with a softly rounded section.
-  const band = new THREE.Mesh(geo(new THREE.TorusGeometry(BAND_R, 0.042, 32, 200, Math.PI)), anodized);
-  band.scale.z = 2.1;
-  model.add(band);
-
-  // Padded leather crown, a shorter arc centered at the top.
-  const padArc = Math.PI * 0.68;
-  const pad = new THREE.Mesh(geo(new THREE.TorusGeometry(BAND_R - 0.085, 0.052, 32, 160, padArc)), cushion);
-  pad.rotation.z = (Math.PI - padArc) / 2;
-  pad.scale.z = 1.6;
-  model.add(pad);
-
-  // --- Sides: stem, pivot, ear cup -----------------------------------------
-  const CUP_R = 0.44;
-  const CUP_DEPTH = 0.24;
-  const BEAD = 0.04; // edge rounding radius
-  const CUP_Y = -0.7;
-  const CUP_SCALE_Y = 1.16;
-
-  for (const side of [-1, 1]) {
-    const sideGroup = new THREE.Group();
-    sideGroup.position.x = side * BAND_R;
-    model.add(sideGroup);
-
-    // Graphite end cap where the band turns into the stem.
-    const endCap = new THREE.Mesh(geo(new THREE.CylinderGeometry(0.046, 0.046, 0.06, 40)), graphite);
-    endCap.scale.z = 1.9;
-    endCap.position.y = -0.02;
-    sideGroup.add(endCap);
-
-    // Polished telescoping stem dropping into the crown of the cup.
-    const stemTop = -0.05;
-    const stemBottom = CUP_Y + CUP_R * CUP_SCALE_Y - 0.02;
-    const stem = new THREE.Mesh(geo(new THREE.CylinderGeometry(0.024, 0.024, stemTop - stemBottom, 32)), steel);
-    stem.position.y = (stemTop + stemBottom) / 2;
-    sideGroup.add(stem);
-
-    // Pivot collar on the crown of the cup.
-    const collar = new THREE.Mesh(geo(new THREE.CylinderGeometry(0.05, 0.058, 0.05, 40)), graphite);
-    collar.position.y = stemBottom + 0.01;
-    sideGroup.add(collar);
-
-    // Cup group: slightly oval (taller than wide).
-    const cup = new THREE.Group();
-    cup.position.y = CUP_Y;
-    cup.scale.set(1, CUP_SCALE_Y, 1);
-    sideGroup.add(cup);
-
-    // Body local +Y is the outward axis; turn it to point away from the head.
-    const body = new THREE.Group();
-    body.rotation.z = side === 1 ? -Math.PI / 2 : Math.PI / 2;
-    cup.add(body);
-
-    // Housing: the main cylinder. Side anodized, faces machined.
-    const housing = new THREE.Mesh(geo(new THREE.CylinderGeometry(CUP_R, CUP_R, CUP_DEPTH, 160, 1)), [
-      anodized,
-      faceMetal,
-      anodized,
-    ]);
-    body.add(housing);
-
-    // Rounded edges on both faces: a torus bead whose outer edge matches the housing wall.
-    for (const y of [CUP_DEPTH / 2, -CUP_DEPTH / 2]) {
-      const bead = new THREE.Mesh(geo(new THREE.TorusGeometry(CUP_R - BEAD, BEAD, 24, 160)), anodized);
-      bead.rotation.x = Math.PI / 2;
-      bead.position.y = y;
-      body.add(bead);
-    }
-
-    // Machined outer face, flush with the top of the bead.
-    const face = new THREE.Mesh(geo(new THREE.CylinderGeometry(CUP_R - BEAD, CUP_R - BEAD, BEAD, 160)), [
-      anodized,
-      faceMetal,
-      anodized,
-    ]);
-    face.position.y = CUP_DEPTH / 2 + BEAD / 2 - 0.002;
-    body.add(face);
-
-    // Polished jewel ring inset on the face.
-    const jewel = new THREE.Mesh(geo(new THREE.TorusGeometry(CUP_R * 0.62, 0.006, 12, 160)), steel);
-    jewel.rotation.x = Math.PI / 2;
-    jewel.position.y = CUP_DEPTH / 2 + BEAD - 0.001;
-    body.add(jewel);
-
-    // Graphite mount between housing and cushion.
-    const mount = new THREE.Mesh(geo(new THREE.CylinderGeometry(CUP_R - 0.02, CUP_R - 0.04, 0.05, 160)), graphite);
-    mount.position.y = -CUP_DEPTH / 2 - BEAD - 0.015;
-    body.add(mount);
-
-    // Cushion: a deep leather donut on the inner face.
-    const cushionMesh = new THREE.Mesh(geo(new THREE.TorusGeometry(CUP_R * 0.7, 0.115, 40, 160)), cushion);
-    cushionMesh.rotation.x = Math.PI / 2;
-    cushionMesh.scale.z = 0.85;
-    cushionMesh.position.y = -CUP_DEPTH / 2 - BEAD - 0.1;
-    body.add(cushionMesh);
-
-    // Acoustic fabric disc recessed inside the cushion.
-    const fabricDisc = new THREE.Mesh(geo(new THREE.CylinderGeometry(CUP_R * 0.6, CUP_R * 0.6, 0.01, 96)), fabric);
-    fabricDisc.position.y = -CUP_DEPTH / 2 - BEAD - 0.05;
-    body.add(fabricDisc);
-  }
-
-  // Center the model around its own bounding box so it turns about its middle.
-  const box = new THREE.Box3().setFromObject(model);
-  model.position.sub(box.getCenter(new THREE.Vector3()));
-
-  return model;
-}
-
-// ---------------------------------------------------------------------------
 // Public API
 // ---------------------------------------------------------------------------
 
@@ -357,7 +125,8 @@ export function initHeroScene(canvas) {
   scene.add(pivot);
   const pose = new THREE.Group();
   pose.rotation.set(BASE_PITCH, BASE_YAW, 0);
-  pose.add(buildHeadphones(disposables));
+  const headphones = createHeadphoneModel();
+  pose.add(headphones);
   pivot.add(pose);
 
   // Contact shadow, fixed in world space below the product.
@@ -445,6 +214,7 @@ export function initHeroScene(canvas) {
       resizeObserver.disconnect();
       if (intersectionObserver) intersectionObserver.disconnect();
       for (const d of disposables) d.dispose();
+      headphones.userData.dispose();
       envRT.dispose();
       renderer.dispose();
     },
