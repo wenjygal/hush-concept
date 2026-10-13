@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-13T04:05:25Z",
+  "title": "Design System: HUSH",
+  "extensions": {
+    "colorMeta": {
+      "void-black": { "role": "neutral", "displayName": "Void Black", "canonical": "#09090b", "tonalRamp": ["#030304", "#050506", "#09090b", "#111113", "#1c1c1f", "#2e2e32", "#4a4a50", "#6e6e76"] },
+      "bone-white": { "role": "neutral", "displayName": "Bone White", "canonical": "#f4f4f5", "tonalRamp": ["#1c1c1d", "#39393b", "#5a5a5d", "#828285", "#aeaeb1", "#cfcfd1", "#e6e6e7", "#f4f4f5"] },
+      "brushed-steel": { "role": "neutral", "displayName": "Brushed Steel", "canonical": "#a1a1aa", "tonalRamp": ["#2a2a2e", "#44444a", "#5e5e66", "#797982", "#95959d", "#a1a1aa", "#bdbdc4", "#dadade"] },
+      "signal-coral": { "role": "primary", "displayName": "Signal Coral", "canonical": "#FF5A3C", "tonalRamp": ["#4a1309", "#7a1f10", "#ab2c17", "#dc3a1f", "#ff5a3c", "#ff8266", "#ffab96", "#ffd4c8"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Hero h1 only. Max two lines." },
+      "headline": { "displayName": "Headline", "purpose": "Every section h2." },
+      "body": { "displayName": "Body", "purpose": "Paragraph copy on Brushed Steel, 34ch max measure." },
+      "label": { "displayName": "Label / Mono", "purpose": "Material & Craft tile bodies only; a spec-register exception, not a general secondary style." }
+    },
+    "shadows": [],
+    "motion": [
+      { "name": "cta-hover", "value": "opacity 0.2s ease", "purpose": "The only interaction transition in the system; the accent dims to 0.88 opacity rather than shifting hue." },
+      { "name": "hero-damped-rotation", "value": "exponential damping, factor 5, toward +/-35deg yaw / +/-8deg pitch from cursor position", "purpose": "The hero model's mouse-follow; never a direct 1:1 mapping." },
+      { "name": "hero-idle-bob", "value": "sinusoidal, 2deg amplitude, 4s period (rotation) plus a 0.03-unit vertical float on a 6s period", "purpose": "Keeps the hero reading as alive with no mouse input, including on touch devices." }
+    ],
+    "breakpoints": [
+      { "name": "mobile", "value": "720px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The page's single CTA intent, identical markup/class in the hero and the reveal section.",
+      "html": "<a class=\"ds-cta\" href=\"#\">Visit BOOST ME</a>",
+      "css": ".ds-cta { display: inline-flex; align-items: center; gap: 0.5rem; background: #FF5A3C; color: #09090b; font-family: 'Cabinet Grotesk', sans-serif; font-weight: 700; font-size: 1rem; padding: 0.9rem 1.75rem; border-radius: 12px; transition: opacity 0.2s ease; text-decoration: none; } .ds-cta:hover, .ds-cta:focus-visible { opacity: 0.88; } .ds-cta:focus-visible { outline: 2px solid #FF5A3C; outline-offset: 3px; }"
+    },
+    {
+      "name": "Bento Tile",
+      "kind": "card",
+      "refersTo": "bento-tile",
+      "description": "Tonal, border-only card used for the Material & Craft section; always grouped asymmetrically (one dominant tile + two smaller).",
+      "html": "<div class=\"ds-tile\"><h3 class=\"ds-tile-title\">Milled from a single block of aluminum</h3><p class=\"ds-tile-body\">The shell starts as a solid aluminum bar, then gets machined down to its final shape.</p></div>",
+      "css": ".ds-tile { background: color-mix(in srgb, #f4f4f5 4%, #09090b); border: 1px solid color-mix(in srgb, #f4f4f5 10%, #09090b); border-radius: 12px; padding: 2rem; display: flex; flex-direction: column; justify-content: flex-end; gap: 0.5rem; } .ds-tile-title { font-family: 'Cabinet Grotesk', sans-serif; font-weight: 700; color: #f4f4f5; font-size: clamp(1.1rem, 1rem + 0.3vw, 1.4rem); line-height: 1.3; } .ds-tile-body { font-family: 'JetBrains Mono', monospace; color: #a1a1aa; font-size: 0.95rem; line-height: 1.5; margin: 0; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Cold Luxury",
+    "overview": "HUSH is built on a single thesis: a product that does not exist has to out-desire real audio hardware, so the page refuses both of the categories it could have fallen into: the generic AI-purple-gradient SaaS hero, and the flat product-shot-on-white convention. The proof offered is a real-time object the visitor turns with their own cursor, not a photograph standing in for one. The register is Teenage Engineering / Nothing-phone precision, not generic Apple minimalism: off-black ground, off-white text, cool metal and silver material cues carried by the product render itself, and exactly one saturated accent (coral, never blue) that appears nowhere except the CTA and interactive highlights. Depth comes from tonal layering and a studio-style radial glow, never from drop shadows. Every surface the browser owns (selection, focus ring, scrollbar) is retuned to the same two base tokens, so even the parts no one explicitly drew still carry the system.",
+    "keyCharacteristics": [
+      "One accent, reserved for exactly one job (CTA + interactive highlight), never used decoratively.",
+      "Zero box-shadow anywhere; depth is tonal (color-mix tints) and radial (a soft glow), not a drop shadow.",
+      "One radius (12px) and one breakpoint (720px): a small, confidently-held system rather than a sprawling one.",
+      "Asymmetric structure throughout: the hero's 40/60 split, the bento's one-large-two-small grid. No centered, symmetric, or same-size layout anywhere on the page."
+    ],
+    "rules": [
+      { "name": "The One Voice Rule", "body": "Signal Coral marks exactly one thing: do this now. It never becomes a section background, a card border, or a secondary heading color. If a second color feels needed, the answer is a stronger tonal shift of Void Black/Bone White, not a second hue.", "section": "colors" },
+      { "name": "The Derived-Tint Rule", "body": "Every background tint and border on the page is generated from color-mix() between Bone White and Void Black at a stated percentage, never a new hardcoded gray.", "section": "colors" },
+      { "name": "The One Family Rule", "body": "Cabinet Grotesk carries every weight the page needs (500 body, 700 display); JetBrains Mono is the single, deliberate exception for spec-register copy, not a second general-purpose voice.", "section": "typography" },
+      { "name": "The Flat-By-Default Rule", "body": "Nothing on the 2D page casts a shadow. If a surface needs to feel raised, tint it toward the ink color; if a product needs to feel physically present, that is the 3D layer's job, not CSS's.", "section": "elevation" },
+      { "name": "The One Radius Rule", "body": "Every rounded corner on the page uses --radius (12px), full stop. A new component does not get to pick its own corner value.", "section": "shapes" }
+    ],
+    "dos": [
+      "Do keep Signal Coral to exactly one job per screen: the CTA fill and interactive highlights. Nothing else is ever coral.",
+      "Do theme every browser-owned surface (text selection, focus ring, scrollbar thumb/track) from the two base neutrals rather than leaving a browser default.",
+      "Do derive every new tint or border from color-mix() between Bone White and Void Black at a stated percentage, not a new hardcoded hex.",
+      "Do use --radius (12px) for every rounded corner; introduce a second radius value only with a stated, deliberate reason.",
+      "Do keep body copy on Brushed Steel against the Void Black ground (approximately 7.7:1), never a flatter gray-on-gray pairing."
+    ],
+    "donts": [
+      "Don't add box-shadow anywhere on the 2D page.",
+      "Don't add an eyebrow or kicker label above any heading.",
+      "Don't build a same-size card grid.",
+      "Don't shift Signal Coral's hue or lightness for hover/focus states; dim it to 0.88 opacity instead.",
+      "Don't introduce gradient text or decorative glass/blur."
+    ]
+  }
+}

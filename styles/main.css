@@ -43,6 +43,7 @@ figure {
 
 html {
   scroll-behavior: smooth;
+  scrollbar-color: var(--color-accent) var(--color-bg);
 }
 
 body {
@@ -77,10 +78,6 @@ a {
 :focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 3px;
-}
-
-html {
-  scrollbar-color: var(--color-accent) var(--color-bg);
 }
 
 ::-webkit-scrollbar {

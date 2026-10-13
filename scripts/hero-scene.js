@@ -8,7 +8,14 @@ import { createRotationState } from "./rotation-controller.js";
 const DEG = Math.PI / 180;
 
 // Rest pose: a three-quarter product angle rather than a flat front view.
-const BASE_YAW = -32 * DEG;
+// -18deg (was -32deg): -32 pushed the right cup's face past ~-67deg absolute
+// at full-left mouse (BASE_YAW + the controller's -35deg extreme), a grazing
+// angle where metalness-1 glass-black faces lost all environment reflection
+// and read as a near-black disc. -18 keeps the three-quarter read at rest
+// while softening both extremes: ~-53deg at full-left (still turned, but off
+// the dead-flat grazing angle) and ~+17deg at full-right (a proper
+// three-quarter instead of the old near-front-on +3deg).
+const BASE_YAW = -18 * DEG;
 const BASE_PITCH = 8 * DEG;
 
 // ---------------------------------------------------------------------------
